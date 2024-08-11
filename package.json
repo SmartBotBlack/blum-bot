@@ -1,0 +1,14 @@
+{
+	"name": "blum",
+	"version": "1.0.0",
+	"description": "",
+	"main": "src/blum.user.js",
+	"scripts": {
+		"lint": "npx @biomejs/biome format --write ./src"
+	},
+	"keywords": ["blum", "bot"],
+	"author": "SmartBot Team",
+	"devDependencies": {
+		"@biomejs/biome": "1.8.3"
+	}
+}
