@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Blum [SmartBot]
 // @namespace    https://smartbot.black/
-// @version      1.0.0
+// @version      1.1.0
 // @description  Bot for playing Blum in telegram
 // @author       Smartbot Team
 // @match        https://telegram.blum.codes/*
@@ -133,6 +133,13 @@
 		for (let i = 0; i <= 10000; ++i) {
 			await emulateRandomMouseClickOnCanvas(canvas);
 			await new Promise((res) => setTimeout(res, getRandomInt(10, 50)));
+			const btnContinue = [...document.querySelectorAll("button")].find(
+				(button) => button?.innerText?.includes("Continue"),
+			);
+			if (btnContinue) {
+				btnContinue.click();
+				return;
+			}
 			const btnPlay = [...document.querySelectorAll("button")].find((button) =>
 				button?.innerText?.includes("Play"),
 			);
@@ -148,6 +155,22 @@
 		try {
 			await new Promise((res) => setTimeout(res, 1e4));
 			console.log("start cycle");
+
+			try {
+				const btnContinue = [...document.querySelectorAll("button")].find(
+					(button) => button?.innerText?.includes("Continue"),
+				);
+
+				if (btnContinue) {
+					btnContinue?.click();
+					await new Promise((res) =>
+						setTimeout(res, getRandomInt(10, 20) * 1e3),
+					);
+				}
+			} catch (err) {
+				console.error(err);
+			}
+
 			try {
 				const btnClaim = [...document.querySelectorAll("button")].find(
 					(button) => button?.innerText?.includes("Claim"),
