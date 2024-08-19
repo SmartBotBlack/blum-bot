@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Blum [SmartBot]
 // @namespace    https://smartbot.black/
-// @version      1.1.0
+// @version      1.2.0
 // @description  Bot for playing Blum in telegram
 // @author       Smartbot Team
 // @match        https://telegram.blum.codes/*
@@ -88,6 +88,19 @@
 		}
 		return originalSend.call(this, body);
 	};
+
+	const createTouch = (target, x, y) =>
+		new Touch({
+			identifier: Date.now(),
+			target: target,
+			clientX: x,
+			clientY: y,
+			radiusX: 2.5,
+			radiusY: 2.5,
+			rotationAngle: 0,
+			force: 0.5,
+		});
+
 	// *
 	const emulateRandomMouseClickOnCanvas = async (canvas) => {
 		const rect = canvas.getBoundingClientRect();
@@ -95,31 +108,35 @@
 		const x = Math.floor(Math.random() * rect.width) + rect.left;
 		const y = Math.floor(Math.random() * rect.height) + rect.top;
 
-		const mousedownEvent = new MouseEvent("mousedown", {
+		const touchstartEvent = new TouchEvent("touchstart", {
 			bubbles: true,
 			cancelable: true,
-			clientX: x,
-			clientY: y,
+			touches: [createTouch(canvas, x, y)],
+			targetTouches: [createTouch(canvas, x, y)],
+			changedTouches: [createTouch(canvas, x, y)],
 		});
 
-		const mouseupEvent = new MouseEvent("mouseup", {
+		const touchmoveEvent = new TouchEvent("touchmove", {
 			bubbles: true,
 			cancelable: true,
-			clientX: x,
-			clientY: y,
+			touches: [createTouch(canvas, x, y)],
+			targetTouches: [createTouch(canvas, x, y)],
+			changedTouches: [createTouch(canvas, x, y)],
 		});
 
-		const clickEvent = new MouseEvent("click", {
+		const touchendEvent = new TouchEvent("touchend", {
 			bubbles: true,
 			cancelable: true,
-			clientX: x,
-			clientY: y,
+			touches: [],
+			targetTouches: [],
+			changedTouches: [createTouch(canvas, x, y)],
 		});
 
-		canvas.dispatchEvent(mousedownEvent);
+		canvas.dispatchEvent(touchstartEvent);
 		await new Promise((res) => setTimeout(res, getRandomInt(10, 50)));
-		canvas.dispatchEvent(mouseupEvent);
-		canvas.dispatchEvent(clickEvent);
+		canvas.dispatchEvent(touchmoveEvent);
+		canvas.dispatchEvent(touchendEvent);
+		await new Promise((res) => setTimeout(res, getRandomInt(1, 20)));
 	};
 
 	const game = async (step = 0) => {
